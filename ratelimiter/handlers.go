@@ -1,33 +1,22 @@
 package ratelimiter
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 )
 
-func (l *Limiter) limiterFilter(msg *gotgbot.Message) bool {
-	if !l.isEnabled || l.isStopped {
-		return false
-	}
-
-	if l.isException(msg) {
-		return false
-	}
-
-	if len(l.exceptions) != 0 {
-		for _, ex := range l.exceptions {
-			if ex(msg) {
-				return false
-			}
-		}
-	}
-
-	return !(l.IgnoreMediaGroup && msg.MediaGroupId != "")
+func (l Limiter) Name() string {
+	return fmt.Sprintf("limiter_%p", l.HandleUpdate)
 }
 
-func (l *Limiter) limiterHandler(b *gotgbot.Bot, ctx *ext.Context) error {
+func (l *Limiter) CheckUpdate(b *gotgbot.Bot, u *gotgbot.Update) bool {
+	return l.isException(u)
+}
+
+func (l *Limiter) HandleUpdate(b *gotgbot.Bot, ctx *ext.Context) error {
 	var status *UserStatus
 	var id int64
 	if l.ConsiderUser && ctx.EffectiveUser != nil {

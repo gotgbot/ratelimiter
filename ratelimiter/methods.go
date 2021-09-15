@@ -89,22 +89,26 @@ func (l *Limiter) IsInExcpetionList(id int64) bool {
 	return false
 }
 
-func (l *Limiter) isException(msg *gotgbot.Message) bool {
+func (l *Limiter) isException(u *gotgbot.Update) bool {
+	if !l.isEnabled || l.isStopped {
+		return false
+	}
+
 	if len(l.exceptionIDs) == 0 {
 		return false
 	}
 
-	for _, ex := range l.exceptionIDs {
-		if msg.From != nil {
-			if ex == msg.From.Id || ex == msg.Chat.Id {
-				return true
-			}
-		} else {
-			if ex == msg.Chat.Id {
-				return true
-			}
-		}
+	fromId := getFromId(u)
+	chatId := getChatId(u)
 
+	if fromId == 0 || chatId == 0 {
+		return true
+	}
+
+	for _, ex := range l.exceptionIDs {
+		if ex == fromId || ex == chatId {
+			return true
+		}
 	}
 
 	return false

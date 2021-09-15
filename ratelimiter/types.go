@@ -43,10 +43,6 @@ type Limiter struct {
 	// has been limited by the limiter, etc...
 	trigger handlers.Response
 
-	filter filters.Message
-
-	handler handlers.Response
-
 	exceptions   []filters.Message
 	exceptionIDs []int64
 
@@ -54,6 +50,5 @@ type Limiter struct {
 	maxTimeout time.Duration
 	maxCount   int
 
-	IgnoreMediaGroup bool
 	ConsiderUser     bool
 }

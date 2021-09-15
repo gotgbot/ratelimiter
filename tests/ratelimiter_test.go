@@ -93,7 +93,7 @@ func TestRateLimiter(t *testing.T) {
 }
 
 func loadHandlers(d *ext.Dispatcher) {
-	limiter := ratelimiter.NewLimiter(d)
+	limiter := ratelimiter.New(nil)
 	limiter.SetTriggerFunc(limitedTrigger)
 
 	msgHandler := handlers.NewMessage(func(msg *gotgbot.Message) bool {
